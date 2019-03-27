@@ -1,0 +1,22 @@
+{
+  "name": "stelace-util-keys",
+  "version": "1.0.0",
+  "description": "Checking and generating Stelace keys or identifiers using random characters",
+  "main": "index.js",
+  "repository": "git@github.com:stelace/stelace-util-keys.git",
+  "author": "abruere <andy@stelace.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+		"test": "ava"
+	},
+  "dependencies": {
+    "base62": "^2.0.1",
+    "escape-string-regexp": "^1.0.5"
+  },
+  "devDependencies": {
+    "ava": "^1.4.1",
+    "debug": "^4.1.1",
+    "standard": "^12.0.1"
+  }
+}
