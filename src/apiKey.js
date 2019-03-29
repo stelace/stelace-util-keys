@@ -31,7 +31,7 @@ async function generateKey ({ type, env, marketplaceId, zone = marketplaceZone }
     throw new Error('Environment is expected to be a string')
   }
 
-  const baseString = type + '_' + env + '_'
+  const baseString = `${type}_${env}_`
 
   // Keep one char for marketplace zone
   const randomCharsNeeded = keyLength - marketplacePartLength - baseString.length
@@ -55,17 +55,13 @@ async function generateKey ({ type, env, marketplaceId, zone = marketplaceZone }
 function parseKey (key) {
   const parts = key.split('_')
 
-  if (parts.length !== 3) {
-    return
-  }
+  if (parts.length !== 3) return
 
   const type = parts[0]
   const env = parts[1]
   const randomString = parts[2]
 
-  if (!listTypes.includes(type)) {
-    return
-  }
+  if (!listTypes.includes(type)) return
 
   const zone = (key.charAt(marketplacePartIndex) || '').toLowerCase()
   const encodedMarketplaceId = key.slice(
@@ -93,7 +89,7 @@ function getBaseKey (key) {
     env
   } = parsedKey
 
-  return type + '_' + env + '_'
+  return `${type}_${env}_`
 }
 
 module.exports = {

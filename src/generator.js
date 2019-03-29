@@ -54,7 +54,7 @@ async function getRandomString (length, {
   replaceRegex,
   replacement
 } = {}) {
-  if (typeof prefix !== 'string' || typeof separator !== 'string') {
+  if ([prefix, separator].some(s => typeof s !== 'string')) {
     throw new Error('String prefix options expected')
   }
   if (!!replaceRegex !== !!replacement) { // kind of XOR, can’t have 1 of 2 strings empty
@@ -87,7 +87,7 @@ function getRandomStringRegex (length = 1, {
   separator = defaultSeparator
 } = {}) {
   const charsNeeded = getCharsNeededAfterPrefix({ length, prefix, separator })
-  if (typeof prefix !== 'string' || typeof separator !== 'string') {
+  if ([prefix, separator].some(s => typeof s !== 'string')) {
     throw new Error('String prefix options expected')
   }
   const escapedBase = escapeStringRegexp(prefix ? prefix + separator : '')
