@@ -8,7 +8,9 @@
   "private": true,
   "scripts": {
     "test": "ava",
-    "test:ci": "ava --tap | tap-xunit"
+    "test:ci": "ava --tap | tap-xunit",
+    "lint": "standard",
+    "lint-fix": "standard --fix"
   },
   "dependencies": {
     "base62": "^2.0.1",
