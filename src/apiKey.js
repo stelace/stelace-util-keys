@@ -7,7 +7,7 @@ const {
   marketplacePartLength
 } = require('./generator')
 
-const listTypes = [
+const builtInTypes = [
   // Two chars max.
   'sk', // secret
   'pk', // publishable
@@ -101,7 +101,7 @@ function validateKeyType (type) {
   if (!type || typeof type !== 'string') {
     throw new Error('ApiKey type is expected to be a string')
   }
-  if (type.length <= 2 && !listTypes.includes(type)) {
+  if (type.length <= 2 && !builtInTypes.includes(type)) {
     throw new Error('Invalid ApiKey type')
   }
   if (type.length > 2 && !customTypeRegex.test(type)) {
@@ -125,5 +125,9 @@ function getBaseKey (key) {
 module.exports = {
   generateKey,
   parseKey,
-  getBaseKey
+  getBaseKey,
+
+  builtInTypes,
+  typeMaxLength,
+  customTypeRegex
 }
