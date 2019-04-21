@@ -236,6 +236,13 @@ function encodeMarketplaceId ({
   return base62.encode(marketplaceIdShifted + maskInteger, base62Index)
 }
 
+/**
+ * Upper-cased zone means we are in live environment.
+ * @param  {Object} params
+ * @param  {String} env - 'live' or 'test'
+ * @param  {String} zone - one of allowed platform zones such as 'e'
+ * @return {String}
+ */
 function formatMarketplaceZone ({ env, zone }) {
   if (typeof env !== 'string') throw new Error('String env expected')
   return env === 'live' ? zone.toUpperCase() : zone
@@ -311,7 +318,8 @@ function extractEncodedMarketplaceId (encodedString, {
   const arrangeInt = base62.decode(shuffler, base62Index) + marketplaceIdBase
   const marketplaceId = (base62.decode(matches[1], base62Index) - arrangeInt).toString()
 
-  if (!marketplaceId || parseInt(marketplaceId, 10) > maxMarketplaceId) {
+  const intMarketplaceId = marketplaceId ? parseInt(marketplaceId, 10) : -1
+  if (intMarketplaceId < 0 || intMarketplaceId > maxMarketplaceId) {
     throw new Error(`Invalid marketplaceId ${marketplaceId}`)
   }
 
