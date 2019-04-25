@@ -12,6 +12,9 @@
     "lint": "standard",
     "lint-fix": "standard --fix"
   },
+  "lint-staged": {
+    "*": ["npm run lint-fix", "git add"]
+  },
   "dependencies": {
     "base62": "^2.0.1",
     "escape-string-regexp": "^1.0.5"
@@ -19,6 +22,7 @@
   "devDependencies": {
     "ava": "^1.4.1",
     "debug": "^4.1.1",
+    "lint-staged": "^8.1.5",
     "standard": "^12.0.1",
     "tap-xunit": "^2.3.0"
   },
