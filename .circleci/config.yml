@@ -28,7 +28,8 @@ jobs:
           command: |
             mkdir -p /tmp/test-results
             # Excluding non-xml lines (not starting with '<' or not indented)
-            yarn test:ci | grep -Ei '^[\s<]' > /tmp/test-results/test-results.xml
+            # using [:space:] rather than \s not parsed correctly by some versions of grep
+            yarn test:ci | grep -Ei '^[[:space:]<]' > /tmp/test-results/test-results.xml
       - store_artifacts:
           path: /tmp/test-results
           prefix: tests
