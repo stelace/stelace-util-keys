@@ -27,7 +27,8 @@ jobs:
           no_output_timeout: 1m
           command: |
             mkdir -p /tmp/test-results
-            yarn test:ci > /tmp/test-results/test-results.xml
+            # Excluding non-xml lines (not starting with '<' or not indented)
+            yarn test:ci | grep -Ei '^[\s<]' > /tmp/test-results/test-results.xml
       - store_artifacts:
           path: /tmp/test-results
           prefix: tests
