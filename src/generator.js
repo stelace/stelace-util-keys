@@ -318,12 +318,24 @@ function extractEncodedMarketplaceId (encodedString, {
   const arrangeInt = base62.decode(shuffler, base62Index) + marketplaceIdBase
   const marketplaceId = (base62.decode(matches[1], base62Index) - arrangeInt).toString()
 
-  const intMarketplaceId = marketplaceId ? parseInt(marketplaceId, 10) : -1
-  if (intMarketplaceId < 0 || intMarketplaceId > maxMarketplaceId) {
+  if (!isValidMarketplaceId(marketplaceId)) {
     throw new Error(`Invalid marketplaceId ${marketplaceId}`)
   }
 
   return marketplaceId
+}
+
+/**
+ * Checks if `marketplaceId` is valid, i.e. within appropriate range.
+ * `marketplaceId` is automatically parsed as an integer if string is passed.
+ * @param {String|Number} - marketplaceId
+ * @return {Boolean}
+ */
+function isValidMarketplaceId (marketplaceId) {
+  const id = marketplaceId ? parseInt(marketplaceId, 10) : -1
+  if (isNaN(id) || id < 0 || id > maxMarketplaceId) return false
+
+  return true
 }
 
 /**
@@ -348,6 +360,7 @@ module.exports = {
   marketplacePartLength,
   formatMarketplaceZone,
   getRandomMarketplaceId,
+  isValidMarketplaceId,
   marketplaceIdBase,
   maxMarketplaceId,
   marketplaceZones,

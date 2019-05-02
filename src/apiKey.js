@@ -63,6 +63,12 @@ async function generateKey ({ type, env, marketplaceId, zone = marketplaceZone }
   return str
 }
 
+/**
+ * Returned extracted information from API `key`. Note that it does not throw and rather sets
+ * `hasValidFormat` value to false in returned object if `key` format is invalid.
+ * @param  {String} key
+ * @return {Object} `{ type, env, marketplaceId, zone, hasValidFormat }`
+ */
 function parseKey (key) {
   const parts = key.split('_')
   let hasValidFormat = false

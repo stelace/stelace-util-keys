@@ -9,6 +9,7 @@ const {
   getObjectId,
   objectIdLength,
   getRandomMarketplaceId,
+  isValidMarketplaceId,
   encodeMarketplaceId,
   extractEncodedMarketplaceId,
   extractDataFromObjectId,
@@ -167,7 +168,7 @@ test('encodes marketplaceId with a shuffler (mask)', async (t) => {
   }
 })
 
-test('generates objectIds with model idPrefix and base64-encoded marketplaceId', async (t) => {
+test('generates objectIds with model idPrefix and base62-encoded marketplaceId', async (t) => {
   const objectIdsPromises = []
   const nbStrings = 1000
   const env = 'live'
@@ -227,4 +228,19 @@ test('throws when generating objectIds with invalid marketplaceId', async (t) =>
   const marketplaceId = maxMarketplaceId + 1
 
   await t.throwsAsync(async () => getObjectId({ prefix, marketplaceId }))
+})
+
+test('validates marketplaceId format', t => {
+  for (let i = 0; i < 1000; i++) {
+    const id = getRandomMarketplaceId()
+    t.true(isValidMarketplaceId(id))
+  }
+
+  const maxId = maxMarketplaceId
+  t.true(isValidMarketplaceId(maxId))
+  t.false(isValidMarketplaceId(maxId + 1))
+  t.false(isValidMarketplaceId(-1))
+  t.false(isValidMarketplaceId(-Infinity))
+  t.false(isValidMarketplaceId(null))
+  t.false(isValidMarketplaceId())
 })
