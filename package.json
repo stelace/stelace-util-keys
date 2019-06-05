@@ -1,6 +1,6 @@
 {
   "name": "stelace-util-keys",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Checking and generating Stelace keys or identifiers using random characters",
   "main": "index.js",
   "repository": "git@github.com:stelace/stelace-util-keys.git",
