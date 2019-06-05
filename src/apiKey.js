@@ -8,15 +8,19 @@ const {
 } = require('./generator')
 
 const builtInTypes = [
-  // Two chars max.
+  'seck', // secret
+  'pubk', // publishable
+  'cntk', // content
+  // DEPRECATED
   'sk', // secret
   'pk', // publishable
   'ck' // content
+  // DEPRECATED:END
 ]
 
 // TODO: detect zone from server environment region (AWS)
 const marketplaceZone = marketplaceZones[0] // 'e'
-const marketplacePartIndex = 20
+const marketplacePartIndex = 12 // excludes 'type_env_' prefix
 const keyLength = 32 // excludes 'type_env_' prefix
 const typeMaxLength = 10
 const customTypeRegex = new RegExp(`^[a-z\\d]{3,${typeMaxLength}}$`, 'i')
@@ -54,11 +58,10 @@ async function generateKey ({ type, env, marketplaceId, zone = marketplaceZone }
 
   const marketplaceString = formatMarketplaceZone({ env, zone }) + encodedMarketplaceId
 
-  const breakRandomStringIndex = marketplacePartIndex - baseString.length
   const str = baseString +
-    randomString.substring(0, breakRandomStringIndex) +
+    randomString.substring(0, marketplacePartIndex) +
     marketplaceString +
-    randomString.substring(breakRandomStringIndex)
+    randomString.substring(marketplacePartIndex)
 
   return str
 }
@@ -80,8 +83,8 @@ function parseKey (key) {
   const env = parts[1]
   const randomString = parts[2]
 
-  const zone = (key.charAt(marketplacePartIndex) || '').toLowerCase()
-  const encodedMarketplaceId = key.slice(
+  const zone = (randomString.charAt(marketplacePartIndex) || '').toLowerCase()
+  const encodedMarketplaceId = randomString.slice(
     marketplacePartIndex,
     marketplacePartIndex + marketplacePartLength
   )
@@ -93,6 +96,12 @@ function parseKey (key) {
   } catch (e) {}
 
   hasValidFormat = [type, env, marketplaceId, zone].every(i => !!i)
+
+  // DEPRECATED: remove this after migration to longer prefixes
+  if (type === 'pk') type = 'pubk'
+  else if (type === 'sk') type = 'seck'
+  else if (type === 'ck') type = 'cntk'
+  // DEPRECATED:END
 
   return {
     type,

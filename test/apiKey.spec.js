@@ -59,7 +59,7 @@ test('throws when trying to generate custom key with invalid type', async (t) =>
 })
 
 test('parses a valid key', async (t) => {
-  const type = 'pk'
+  const type = 'pubk'
   const env = 'test'
   const zone = marketplaceZones[0]
 
@@ -78,10 +78,10 @@ test('parses a valid key', async (t) => {
 })
 
 test('rejects a forged key with invalid platform id / mask', async (t) => {
-  t.is(parseKey('pk_live_iuJzTKo5wumuE1imRjmcgimx').hasValidFormat, false)
+  t.is(parseKey('pubk_live_iuJzTKo5wumuE1imRjmcgimx').hasValidFormat, false)
 
-  t.deepEqual(parseKey('pk_live_iuJzTKo5wumuE1inRjmcgimx'), {
-    type: 'pk',
+  t.deepEqual(parseKey('pubk_live_iuJzTKo5wumuE1inRjmcgimx'), {
+    type: 'pubk',
     env: 'live',
     marketplaceId: '31',
     zone: 'e',
@@ -89,20 +89,40 @@ test('rejects a forged key with invalid platform id / mask', async (t) => {
   })
 })
 
+// DEPRECATED: remove these tests after migration
 test('parses a shorter key (legacy)', async (t) => {
   t.deepEqual(parseKey('pk_test_m6DF3SOm0DcIs1atGMMPoasm'), {
-    type: 'pk',
+    type: 'pubk',
     env: 'test',
     marketplaceId: '31',
     zone: 's',
     hasValidFormat: true
   })
 
-  t.deepEqual(parseKey('pk_live_iuJzTKo5wumuE1imRjmcgilx'), {
-    type: 'pk',
+  t.deepEqual(parseKey('pubk_live_iuJzTKo5wumuE1imRjmcgilx'), {
+    type: 'pubk',
     env: 'live',
     marketplaceId: '31',
     zone: 'e',
     hasValidFormat: true
   })
 })
+
+test('parses a key with short prefix (legacy)', async (t) => {
+  t.deepEqual(parseKey('sk_test_wakWA41rBTUXs1Y5pNRjeY5p'), {
+    type: 'seck',
+    env: 'test',
+    marketplaceId: '1',
+    zone: 's',
+    hasValidFormat: true
+  })
+
+  t.deepEqual(parseKey('pk_live_HZ908JhKNeLWs16Cdl7N46Cd'), {
+    type: 'pubk',
+    env: 'live',
+    marketplaceId: '1',
+    zone: 's',
+    hasValidFormat: true
+  })
+})
+// DEPRECATED:END
