@@ -22,7 +22,7 @@ const builtInTypes = [
 const marketplaceZone = marketplaceZones[0] // 'e'
 const marketplacePartIndex = 12 // excludes 'type_env_' prefix
 const keyLength = 32 // excludes 'type_env_' prefix
-const typeMinLength = 2
+const typeMinLength = 4
 const typeMaxLength = 10
 const customTypeRegex = new RegExp(`^[a-z\\d]{5,${typeMaxLength}}$`, 'i')
 
