@@ -22,8 +22,9 @@ const builtInTypes = [
 const marketplaceZone = marketplaceZones[0] // 'e'
 const marketplacePartIndex = 12 // excludes 'type_env_' prefix
 const keyLength = 32 // excludes 'type_env_' prefix
+const typeMinLength = 2
 const typeMaxLength = 10
-const customTypeRegex = new RegExp(`^[a-z\\d]{3,${typeMaxLength}}$`, 'i')
+const customTypeRegex = new RegExp(`^[a-z\\d]{5,${typeMaxLength}}$`, 'i')
 
 /**
  * Generate API key with appropriate info and random characters
@@ -116,10 +117,10 @@ function validateKeyType (type) {
   if (!type || typeof type !== 'string') {
     throw new Error('ApiKey type is expected to be a string')
   }
-  if (type.length <= 2 && !builtInTypes.includes(type)) {
+  if (type.length <= typeMinLength && !builtInTypes.includes(type)) {
     throw new Error('Invalid ApiKey type')
   }
-  if (type.length > 2 && !customTypeRegex.test(type)) {
+  if (type.length > typeMinLength && !customTypeRegex.test(type)) {
     throw new Error(`Custom ApiKey type must match ${customTypeRegex}`)
   }
   return type
