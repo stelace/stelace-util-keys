@@ -74,9 +74,10 @@ async function generateKey ({ type, env, marketplaceId, zone = marketplaceZone }
  * @return {Object} `{ type, env, marketplaceId, zone, hasValidFormat }`
  */
 function parseKey (key) {
-  const parts = key.split('_')
   let hasValidFormat = false
+  if (typeof key !== 'string') return { hasValidFormat }
 
+  const parts = key.split('_')
   if (parts.length !== 3) return { hasValidFormat }
 
   let marketplaceId
