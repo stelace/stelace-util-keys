@@ -8,12 +8,12 @@ const {
   padWithRandomChars,
   getObjectId,
   objectIdLength,
-  getRandomMarketplaceId,
-  isValidMarketplaceId,
-  encodeMarketplaceId,
-  extractEncodedMarketplaceId,
+  getRandomPlatformId,
+  isValidPlatformId,
+  encodePlatformId,
+  extractEncodedPlatformId,
   extractDataFromObjectId,
-  maxMarketplaceId
+  maxPlatformId
 } = require('../src/generator')
 
 test('generates a random string of given length', async (t) => {
@@ -117,57 +117,110 @@ test('generates strings with appropriate substitutions using RegExp (digits only
   t.true(randomStrings.every(string => digitRegExp.test(string)))
 })
 
-test('extracts marketplaceId from marketplaceId encoded and masked string', async (t) => {
-  const marketplaceIds = {
+test('extracts platformId from platformId encoded and masked string', async (t) => {
+  const platformIds = {
     'S1123': { id: '1', shuffler: '123' }, // base 62
     'S1a0A': { id: '11', shuffler: 'a00' },
-    'szzzz': { id: maxMarketplaceId.toString(), shuffler: 'zzz' }
+    'szzzz': { id: maxPlatformId.toString(), shuffler: 'zzz' }
   }
 
-  Object.keys(marketplaceIds).forEach((paddedIdString) => {
-    let decodedMarketplaceId
+  Object.keys(platformIds).forEach((paddedIdString) => {
+    let decodedPlatformId
     try {
-      decodedMarketplaceId = extractEncodedMarketplaceId(paddedIdString, {
-        shuffler: marketplaceIds[paddedIdString].shuffler
+      decodedPlatformId = extractEncodedPlatformId(paddedIdString, {
+        shuffler: platformIds[paddedIdString].shuffler
       })
     } catch (e) {
-      t.fail(`fails to extract marketplaceId from ${paddedIdString}`)
+      t.fail(`fails to extract platformId from ${paddedIdString}`)
     }
-    t.true(decodedMarketplaceId === marketplaceIds[paddedIdString].id)
+    t.true(decodedPlatformId === platformIds[paddedIdString].id)
   })
 })
 
-test('encodes marketplaceId with a shuffler (mask)', async (t) => {
-  const marketplaceIds = {}
+test('encodes platformId with a shuffler (mask)', async (t) => {
+  const platformIds = {}
 
   for (let i = 0; i < 1000; i++) {
-    const marketplaceId = getRandomMarketplaceId()
+    const platformId = getRandomPlatformId()
     const shuffler = await getRandomString(3)
 
-    marketplaceIds[marketplaceId] = {
-      encoded: encodeMarketplaceId({
-        marketplaceId: marketplaceId,
+    platformIds[platformId] = {
+      encoded: encodePlatformId({
+        platformId: platformId,
         shuffler
       }),
       shuffler
     }
   }
 
-  for (let marketplaceId in marketplaceIds) {
-    const id = marketplaceIds[marketplaceId]
-    let decodedMarketplaceId
+  for (let platformId in platformIds) {
+    const id = platformIds[platformId]
+    let decodedPlatformId
     try {
-      decodedMarketplaceId = extractEncodedMarketplaceId(id.encoded, {
+      decodedPlatformId = extractEncodedPlatformId(id.encoded, {
         shuffler: id.shuffler,
         zone: ''
       })
     } catch (e) {
-      t.fail(`fails to extract marketplaceId from ${id.encoded} after encoding`)
+      t.fail(`fails to extract platformId from ${id.encoded} after encoding`)
     }
-    t.true(decodedMarketplaceId === marketplaceId)
+    t.true(decodedPlatformId === platformId)
   }
 })
 
+test('generates objectIds with model idPrefix and base62-encoded platformId', async (t) => {
+  const objectIdsPromises = []
+  const nbStrings = 1000
+  const env = 'live'
+  const idPrefixes = [
+    'test',
+    'usr',
+    'catgy',
+    'ast',
+    'assm'
+  ]
+  const prefixes = Array.from(Array(nbStrings), (_, i) => {
+    // Test all prefix lengths
+    return i < idPrefixes.length
+      ? idPrefixes[i] : idPrefixes[Math.floor(Math.random() * idPrefixes.length)]
+  })
+  const platformIds = Array.from(Array(nbStrings), (_, i) => {
+    // Test all platforms from 1 to 101, go random afterwards
+    const id = i <= 100 ? i + 1 : getRandomPlatformId()
+    return id.toString()
+  })
+  const start = performance.now()
+
+  debug(`Start generating ${nbStrings} object Ids…`)
+
+  for (let i = 0; i < nbStrings; i++) {
+    objectIdsPromises.push(getObjectId({
+      prefix: prefixes[i],
+      platformId: platformIds[i],
+      env
+    }))
+  }
+
+  const objectIds = await Promise.all(objectIdsPromises)
+
+  debug(`Object Ids generated after: ${performance.now() - start}ms`)
+
+  t.true(objectIds.every((string, i) => {
+    return getRandomStringRegex(objectIdLength, { prefix: prefixes[i], env }).test(string)
+  }))
+  t.true(objectIds.every((string, index) => {
+    let decodedPlatformId
+    try {
+      decodedPlatformId = extractDataFromObjectId(string).platformId
+    } catch (e) {
+      return false
+    }
+
+    return decodedPlatformId === platformIds[index]
+  }))
+})
+
+// DEPRECATED: remove this after renaming marketplace into platform
 test('generates objectIds with model idPrefix and base62-encoded marketplaceId', async (t) => {
   const objectIdsPromises = []
   const nbStrings = 1000
@@ -184,9 +237,9 @@ test('generates objectIds with model idPrefix and base62-encoded marketplaceId',
     return i < idPrefixes.length
       ? idPrefixes[i] : idPrefixes[Math.floor(Math.random() * idPrefixes.length)]
   })
-  const marketplaceIds = Array.from(Array(nbStrings), (_, i) => {
-    // Test all marketplaces from 1 to 101, go random afterwards
-    const id = i <= 100 ? i + 1 : getRandomMarketplaceId()
+  const platformIds = Array.from(Array(nbStrings), (_, i) => {
+    // Test all platforms from 1 to 101, go random afterwards
+    const id = i <= 100 ? i + 1 : getRandomPlatformId()
     return id.toString()
   })
   const start = performance.now()
@@ -196,7 +249,7 @@ test('generates objectIds with model idPrefix and base62-encoded marketplaceId',
   for (let i = 0; i < nbStrings; i++) {
     objectIdsPromises.push(getObjectId({
       prefix: prefixes[i],
-      marketplaceId: marketplaceIds[i],
+      marketplaceId: platformIds[i],
       env
     }))
   }
@@ -216,31 +269,32 @@ test('generates objectIds with model idPrefix and base62-encoded marketplaceId',
       return false
     }
 
-    return decodedMarketplaceId === marketplaceIds[index]
+    return decodedMarketplaceId === platformIds[index]
   }))
 })
+// DEPRECATED:END
 
-test('throws when generating objectIds with invalid marketplaceId', async (t) => {
+test('throws when generating objectIds with invalid platformId', async (t) => {
   const prefix = 'test'
 
   await t.throwsAsync(async () => getObjectId({ prefix }))
 
-  const marketplaceId = maxMarketplaceId + 1
+  const platformId = maxPlatformId + 1
 
-  await t.throwsAsync(async () => getObjectId({ prefix, marketplaceId }))
+  await t.throwsAsync(async () => getObjectId({ prefix, platformId }))
 })
 
-test('validates marketplaceId format', t => {
+test('validates platformId format', t => {
   for (let i = 0; i < 1000; i++) {
-    const id = getRandomMarketplaceId()
-    t.true(isValidMarketplaceId(id))
+    const id = getRandomPlatformId()
+    t.true(isValidPlatformId(id))
   }
 
-  const maxId = maxMarketplaceId
-  t.true(isValidMarketplaceId(maxId))
-  t.false(isValidMarketplaceId(maxId + 1))
-  t.false(isValidMarketplaceId(-1))
-  t.false(isValidMarketplaceId(-Infinity))
-  t.false(isValidMarketplaceId(null))
-  t.false(isValidMarketplaceId())
+  const maxId = maxPlatformId
+  t.true(isValidPlatformId(maxId))
+  t.false(isValidPlatformId(maxId + 1))
+  t.false(isValidPlatformId(-1))
+  t.false(isValidPlatformId(-Infinity))
+  t.false(isValidPlatformId(null))
+  t.false(isValidPlatformId())
 })
