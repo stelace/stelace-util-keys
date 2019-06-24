@@ -362,6 +362,36 @@ function getRandomPlatformId () {
   return (Math.floor(Math.random() * (max - min + 1)) + min).toString()
 }
 
+/**
+ * Returned extracted information from public platform ID. Note that it does not throw and rather sets
+ * `hasValidFormat` value to false in returned object if `publicPlatformId` format is invalid.
+ * @param  {String} publicPlatformId
+ * @return {Object} `{ env, platformId, zone, hasValidFormat }`
+ */
+function parsePublicPlatformId (publicPlatformId) {
+  let hasValidFormat = false
+  if (typeof publicPlatformId !== 'string') return { hasValidFormat }
+
+  const parts = publicPlatformId.split('_')
+  if (parts.length !== 2) return { hasValidFormat }
+
+  const zone = parts[0].charAt(0)
+  const platformId = parts[0].slice(1)
+  const env = parts[1]
+
+  if (!platformZones.includes(zone)) return { hasValidFormat }
+  if (!platformId || !isValidPlatformId(platformId)) return { hasValidFormat }
+
+  hasValidFormat = [env, platformId, zone].every(i => !!i)
+
+  return {
+    env,
+    platformId,
+    zone,
+    hasValidFormat
+  }
+}
+
 module.exports = {
   getRandomString,
   getRandomStringRegex,
@@ -375,6 +405,7 @@ module.exports = {
   formatPlatformZone,
   getRandomPlatformId,
   isValidPlatformId,
+  parsePublicPlatformId,
   platformIdBase,
   maxPlatformId,
   platformZones,

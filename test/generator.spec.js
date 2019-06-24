@@ -13,6 +13,8 @@ const {
   encodePlatformId,
   extractEncodedPlatformId,
   extractDataFromObjectId,
+  parsePublicPlatformId,
+  platformZones,
   maxPlatformId
 } = require('../src/generator')
 
@@ -297,4 +299,21 @@ test('validates platformId format', t => {
   t.false(isValidPlatformId(-Infinity))
   t.false(isValidPlatformId(null))
   t.false(isValidPlatformId())
+})
+
+test('parses a public platform ID', async (t) => {
+  const env = 'test'
+  const zone = platformZones[0]
+
+  for (let i = 0; i < 1000; i++) {
+    const platformId = getRandomPlatformId()
+    const publicPlatformId = `${zone}${platformId}_${env}`
+
+    t.deepEqual(parsePublicPlatformId(publicPlatformId), {
+      env,
+      platformId,
+      zone,
+      hasValidFormat: true
+    })
+  }
 })
