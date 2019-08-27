@@ -222,60 +222,6 @@ test('generates objectIds with model idPrefix and base62-encoded platformId', as
   }))
 })
 
-// DEPRECATED: remove this after renaming marketplace into platform
-test('generates objectIds with model idPrefix and base62-encoded marketplaceId', async (t) => {
-  const objectIdsPromises = []
-  const nbStrings = 1000
-  const env = 'live'
-  const idPrefixes = [
-    'test',
-    'usr',
-    'catgy',
-    'ast',
-    'assm'
-  ]
-  const prefixes = Array.from(Array(nbStrings), (_, i) => {
-    // Test all prefix lengths
-    return i < idPrefixes.length
-      ? idPrefixes[i] : idPrefixes[Math.floor(Math.random() * idPrefixes.length)]
-  })
-  const platformIds = Array.from(Array(nbStrings), (_, i) => {
-    // Test all platforms from 1 to 101, go random afterwards
-    const id = i <= 100 ? i + 1 : getRandomPlatformId()
-    return id.toString()
-  })
-  const start = performance.now()
-
-  debug(`Start generating ${nbStrings} object Ids…`)
-
-  for (let i = 0; i < nbStrings; i++) {
-    objectIdsPromises.push(getObjectId({
-      prefix: prefixes[i],
-      marketplaceId: platformIds[i],
-      env
-    }))
-  }
-
-  const objectIds = await Promise.all(objectIdsPromises)
-
-  debug(`Object Ids generated after: ${performance.now() - start}ms`)
-
-  t.true(objectIds.every((string, i) => {
-    return getRandomStringRegex(objectIdLength, { prefix: prefixes[i], env }).test(string)
-  }))
-  t.true(objectIds.every((string, index) => {
-    let decodedMarketplaceId
-    try {
-      decodedMarketplaceId = extractDataFromObjectId(string).marketplaceId
-    } catch (e) {
-      return false
-    }
-
-    return decodedMarketplaceId === platformIds[index]
-  }))
-})
-// DEPRECATED:END
-
 test('throws when generating objectIds with invalid platformId', async (t) => {
   const prefix = 'test'
 

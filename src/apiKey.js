@@ -10,16 +10,11 @@ const {
 const builtInTypes = [
   'seck', // secret
   'pubk', // publishable
-  'cntk', // content
-  // DEPRECATED
-  'sk', // secret
-  'pk', // publishable
-  'ck' // content
-  // DEPRECATED:END
+  'cntk' // content
 ]
 
 // TODO: detect zone from server environment region (AWS)
-const platformZone = platformZones[0] // 'e'
+const platformZone = platformZones[0] // using 'e' as default
 const platformPartIndex = 12 // excludes 'type_env_' prefix
 const keyLength = 32 // excludes 'type_env_' prefix
 const typeMinLength = 4
@@ -28,7 +23,7 @@ const customTypeRegex = new RegExp(`^[a-z\\d]{5,${typeMaxLength}}$`, 'i')
 
 /**
  * Generate API key with appropriate info and random characters
- * @param  {String} type - '(s|p|c)k' built-in type, or custom user type [a-z\d]{3,10}
+ * @param  {String} type - '(sec|pub)k' built-in type, or custom user type [a-z\d]{5,10}
  * @param  {String} env - either 'live' or 'test'
  * @param  {String} platformId - Platform Id string integer
  * @param  {String} [zone='e'] - one of allowed zones such as 'e'
@@ -98,12 +93,6 @@ function parseKey (key) {
   } catch (e) {}
 
   hasValidFormat = [type, env, platformId, zone].every(i => !!i)
-
-  // DEPRECATED: remove this after migration to longer prefixes
-  if (type === 'pk') type = 'pubk'
-  else if (type === 'sk') type = 'seck'
-  else if (type === 'ck') type = 'cntk'
-  // DEPRECATED:END
 
   return {
     type,

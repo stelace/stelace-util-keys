@@ -10,7 +10,7 @@ const {
 } = require('../src/apiKey')
 
 test('generates valid keys for a given platformId', async (t) => {
-  const type = 'sk'
+  const type = 'seck'
   const env = 'test'
   const platformId = '12'
   const expectedPrefix = `${type}_${env}_`
@@ -85,43 +85,6 @@ test('rejects a forged key with invalid platform id / mask', async (t) => {
     env: 'live',
     platformId: '31',
     zone: 'e',
-    hasValidFormat: true
-  })
-})
-
-// DEPRECATED: remove these tests after migration
-test('parses a shorter key (legacy)', async (t) => {
-  t.deepEqual(parseKey('pk_test_m6DF3SOm0DcIs1atGMMPoasm'), {
-    type: 'pubk',
-    env: 'test',
-    platformId: '31',
-    zone: 's',
-    hasValidFormat: true
-  })
-
-  t.deepEqual(parseKey('pubk_live_iuJzTKo5wumuE1imRjmcgilx'), {
-    type: 'pubk',
-    env: 'live',
-    platformId: '31',
-    zone: 'e',
-    hasValidFormat: true
-  })
-})
-
-test('parses a key with short prefix (legacy)', async (t) => {
-  t.deepEqual(parseKey('sk_test_wakWA41rBTUXs1Y5pNRjeY5p'), {
-    type: 'seck',
-    env: 'test',
-    platformId: '1',
-    zone: 's',
-    hasValidFormat: true
-  })
-
-  t.deepEqual(parseKey('pk_live_HZ908JhKNeLWs16Cdl7N46Cd'), {
-    type: 'pubk',
-    env: 'live',
-    platformId: '1',
-    zone: 's',
     hasValidFormat: true
   })
 })
