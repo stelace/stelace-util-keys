@@ -351,26 +351,29 @@ function getRandomPlatformId () {
 }
 
 /**
- * Returned extracted information from public platform ID. Note that it does not throw and rather sets
- * `hasValidFormat` value to false in returned object if `publicPlatformId` format is invalid.
+ * Returned extracted information from “public” platform ID like `e11` or `e11_live`,
+ * containing info needed to locate the platform on infrastructure built with Stelace server.
+ * Note that this function does not throw and rather sets `hasValidFormat` value to `false`
+ * in returned object if `publicPlatformId` format is invalid.
  * @param  {String} publicPlatformId
- * @return {Object} `{ env, platformId, zone, hasValidFormat }`
+ * @return {Object} `{ env, platformId, zone, hasValidFormat }`,
+ *   `env` can be null if `_[env]` part is not provided in publicPlatformId
  */
 function parsePublicPlatformId (publicPlatformId) {
   let hasValidFormat = false
   if (typeof publicPlatformId !== 'string') return { hasValidFormat }
 
   const parts = publicPlatformId.split('_')
-  if (parts.length !== 2) return { hasValidFormat }
+  if (!parts.length || parts.length > 2) return { hasValidFormat }
 
   const zone = parts[0].charAt(0)
   const platformId = parts[0].slice(1)
-  const env = parts[1]
+  const env = parts[1] || null
 
   if (!platformZones.includes(zone)) return { hasValidFormat }
   if (!platformId || !isValidPlatformId(platformId)) return { hasValidFormat }
 
-  hasValidFormat = [env, platformId, zone].every(i => !!i)
+  hasValidFormat = [platformId, zone].every(i => !!i)
 
   return {
     env,

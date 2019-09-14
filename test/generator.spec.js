@@ -254,9 +254,16 @@ test('parses a public platform ID', async (t) => {
   for (let i = 0; i < 1000; i++) {
     const platformId = getRandomPlatformId()
     const publicPlatformId = `${zone}${platformId}_${env}`
+    const withoutEnv = `${zone}${platformId}`
 
     t.deepEqual(parsePublicPlatformId(publicPlatformId), {
       env,
+      platformId,
+      zone,
+      hasValidFormat: true
+    })
+    t.deepEqual(parsePublicPlatformId(withoutEnv), {
+      env: null,
       platformId,
       zone,
       hasValidFormat: true
