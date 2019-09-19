@@ -2,10 +2,10 @@
   "name": "stelace-util-keys",
   "version": "3.0.0",
   "description": "Checking and generating Stelace keys or identifiers using random characters",
+  "license": "MIT",
   "main": "index.js",
   "repository": "git@github.com:stelace/stelace-util-keys.git",
   "author": "Stelace (https://stelace.com)",
-  "private": true,
   "scripts": {
     "test": "ava",
     "test:ci": "ava --tap | tap-xunit",
