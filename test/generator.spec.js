@@ -121,9 +121,9 @@ test('generates strings with appropriate substitutions using RegExp (digits only
 
 test('extracts platformId from platformId encoded and masked string', async (t) => {
   const platformIds = {
-    'S1123': { id: '1', shuffler: '123' }, // base 62
-    'S1a0A': { id: '11', shuffler: 'a00' },
-    'szzzz': { id: maxPlatformId.toString(), shuffler: 'zzz' }
+    S1123: { id: '1', shuffler: '123' }, // base 62
+    S1a0A: { id: '11', shuffler: 'a00' },
+    szzzz: { id: maxPlatformId.toString(), shuffler: 'zzz' }
   }
 
   Object.keys(platformIds).forEach((paddedIdString) => {
@@ -155,7 +155,7 @@ test('encodes platformId with a shuffler (mask)', async (t) => {
     }
   }
 
-  for (let platformId in platformIds) {
+  for (const platformId in platformIds) {
     const id = platformIds[platformId]
     let decodedPlatformId
     try {

@@ -178,7 +178,7 @@ async function getObjectId ({
     throw new Error('String prefix option expected')
   }
 
-  let baseString = prefix ? prefix + separator : ''
+  const baseString = prefix ? prefix + separator : ''
   if (objectIdLength <= (4 / 3) * (baseString.length + platformPartLength)) {
     throw new Error('Length should be high enough to pad ID with random characters')
   }
