@@ -22,7 +22,7 @@
   "devDependencies": {
     "ava": "^3.9.0",
     "debug": "^4.1.1",
-    "lint-staged": "^10.2.10",
+    "lint-staged": "^10.2.11",
     "standard": "^14.3.4",
     "tap-xunit": "^2.4.1"
   },
