@@ -20,7 +20,7 @@
     "escape-string-regexp": "^4.0.0"
   },
   "devDependencies": {
-    "ava": "^3.12.1",
+    "ava": "^3.13.0",
     "debug": "^4.2.0",
     "lint-staged": "^10.4.0",
     "standard": "^14.3.4",
