@@ -23,7 +23,7 @@
     "ava": "^3.13.0",
     "debug": "^4.2.0",
     "lint-staged": "^10.4.2",
-    "standard": "^14.3.4",
+    "standard": "^15.0.0",
     "tap-xunit": "^2.4.1"
   },
   "engines": {
